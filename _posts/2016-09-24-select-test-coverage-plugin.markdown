@@ -2,7 +2,7 @@
 layout: post
 title:  "Cobertura and JaCoCo: using test coverage plugin"
 date:   2016-09-23 21:15:49 -0400
-categories: test coverage
+categories: jekyll update
 ---
 Recently I decided to configure a test coverage plugin for one of my pet projects to have a better visibility of my unit tests. At work we use [SonarQube](http://www.sonarqube.org/) - too much for my purpose. I immediately looked at Cobertura and its [Maven plugin](http://www.mojohaus.org/cobertura-maven-plugin/). Several years ago I setup Cobertura for couple of real projects at our CI server and it worked great. The setup was straightforward and I started to enjoy my test coverage report. My happy time was short - once I started to use lambdas (introduced in Java 8) extensively the plugin started to struggle with analysis. The plugin failed to check those classes and generated a errors like:
 
