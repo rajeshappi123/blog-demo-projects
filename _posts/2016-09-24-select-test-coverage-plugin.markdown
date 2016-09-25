@@ -10,11 +10,11 @@ Recently I decided to configure a test coverage plugin for one of my pet project
 java.lang.IllegalArgumentException: INVOKESPECIAL/STATIC on interfaces require ASM 5
 ```
 
-I was using version 2.7 which supposed to support Java 8. Once googled I found that I am not the only one who is facing those issues. People reported same issues at their [GitHub page] (https://github.com/cobertura/cobertura/issues/166)
+I was using version 2.7 which supposed to support Java 8. Once googled I found that I am not the only one who is facing those issues. People reported same issues at their [GitHub page](https://github.com/cobertura/cobertura/issues/166)
 
 Dilemma: should I spent more time digging into it or try an alternative?
 
-I knew that SonarQube was using (JaCoCo)[http://www.eclemma.org/jacoco/] and I also used Emma Eclipse plugin long time ago and it also worked quite well. Decided to try JaCoco. The setup was not as neat as for Cobertura plugin but I made it working and it worked perfectly with Java 8.
+I knew that SonarQube was using [JaCoCo](http://www.eclemma.org/jacoco/) and I also used Emma Eclipse plugin long time ago and it also worked quite well. Decided to try JaCoco. The setup was not as neat as for Cobertura plugin but I made it working and it worked perfectly with Java 8.
 
 The final Maven plugin configuration is below - just in case somebody wants to have it as an example.
 
