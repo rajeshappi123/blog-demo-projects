@@ -39,3 +39,5 @@ Cons:
 Well, let's take next step.
 
 Looked really promising.
+
+{% include custom_footer.html %}

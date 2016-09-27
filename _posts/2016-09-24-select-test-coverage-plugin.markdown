@@ -49,3 +49,4 @@ The final Maven plugin configuration is below - just in case somebody wants to h
     ...
 </build>
 ```
+{% include custom_footer.html %}
