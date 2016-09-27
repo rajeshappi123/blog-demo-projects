@@ -13,7 +13,7 @@ We are starting a new project in Healthcare integration domain. The core functio
  -  [HL7v2](https://en.wikipedia.org/wiki/Health_Level_7#HL7_version_2) is a version of HL7 standard developed in 1989 and it is based on pipes `|` and caret `^`.
  -  [HAPI](http://hl7api.sourceforge.net/) is a Java-based Hl7v2 parser library.
 
-When I first heard about Hl7v2 several years ago and reviewed HL7v2 messages it looked like a bad joke. Neither XML nor JSON, really? Well, 1989 - what else you can expect. On the other side the protocol is widely adopted and currently it is still the main workhorse in healthcare industry.
+When I first heard about HL7v2 several years ago and reviewed HL7v2 messages it looked like a bad joke. Neither XML nor JSON, really? Well, 1989 - what else you can expect. On the other side the protocol is widely adopted and currently it is still the main workhorse in healthcare industry.
 
 First results of checking HAPI website:
 - The latest stable version is 2.2 and the sast published date is "2014-05-12";
