@@ -16,7 +16,7 @@ Dilemma: should I spent more time digging into it or try an alternative?
 
 I knew that SonarQube was using [JaCoCo](http://www.eclemma.org/jacoco/) and I also used Emma Eclipse plugin long time ago and it also worked quite well. Decided to try JaCoco. The setup was not as neat as for Cobertura plugin but I made it working and it worked perfectly with Java 8.
 
-The final Maven plugin configuration is below - just in case somebody wants to have it as an example.
+The final Maven plugin configuration is below.
 
 ```
 <build>
