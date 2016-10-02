@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "My First Steps with HAPI. Pat 1. Introduction."
+title:  "My First Steps with HAPI. Part 1. Introduction."
 date:   2016-09-25 22:55:49 -0400
 categories: java hapi
 ---
