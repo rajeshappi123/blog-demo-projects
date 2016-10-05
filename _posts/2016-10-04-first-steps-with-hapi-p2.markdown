@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "My First Steps with HAPI. Part 2. Parsing HL7 message."
-date:   2016-10-01 17:55:49 -0400
+date:   2016-10-04 22:55:49 -0400
 categories: java hapi
 ---
 This post is a second part of my introduction into HAPI library.
@@ -37,12 +37,40 @@ which is a good starting point. Will use it as well - will jump right to section
     <groupId>ca.uhn.hapi</groupId>
     <artifactId>hapi-structures-v24</artifactId>
     <version>${hapi.version}</version>
+    <scope>compile</scope>
   </dependency>
 ..........................
 ```
 - Import project into the IDE.
 
 *Notes: HAPI library packs structures for different HL7 versions in different artifacts. In my case I will use/parse HL7v2.4 messages -  I only included 'hapi-structures-v24' artifact.*
+
+#### Coding
+- Create an instance HapiContext
+- Create an instance of CanonicalModelClassFactory
+- Add/set CanonicalModelClassFactory to HapiContext
+- Get parser (PipeParser)
+- Parse message
+
+Below is a piece of sample code:
+
+```
+HapiContext context = new DefaultHapiContext();
+
+CanonicalModelClassFactory mcf = new CanonicalModelClassFactory("2.4");
+
+context.setModelClassFactory(mcf);
+
+PipeParser parser = context.getPipeParser();
+
+ca.uhn.hl7v2.model.v24.message.ORU_R01 msg = (ca.uhn.hl7v2.model.v24.message.ORU_R01) parser.parse(message);
+```
+
+The following things immediately pops to our eyes:
+- CanonicalModelClassFactory takes Hl7v2 specific version (2.4 in our case)
+- Parsing result is an instance of ORU_R01 class from package ca.uhn.hl7v2.model.v24.message
+
+Items above means that we need to know which HL7v2 message we expect to parse and each version has its own strict model.
 
 
 {% include custom_footer.html %}
