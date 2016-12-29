@@ -2,7 +2,7 @@
 layout: post
 title:  "Configure Shibboleth SP on macOS Sierra"
 date:   2016-12-28 11:15:49 -0400
-categories: jekyll update
+categories: apache shibboleth
 ---
 
 ## Software
