@@ -18,8 +18,8 @@ email: mogikanensoftware@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   This blog is an attempt to dive into personal blogging related to software development.
 baseurl: "" # the subpath of your site, e.g. /blog
-#url: "https://mogikanen9.github.io"
-url: "http://127.0.0.1:4000"
+url: "https://mogikanen9.github.io"
+#url: "http://127.0.0.1:4000"
 twitter_username: mogikanen9
 github_username:  mogikanen9
 
