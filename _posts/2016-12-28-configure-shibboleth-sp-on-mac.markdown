@@ -38,115 +38,123 @@ As a result we got  a pare of public cert and private key which we can use for S
 ***
 ### 3. Configure Apache
 
-  Apache2 on macOS configuration files are located at /etc/apache2. By default only http is available and default port is 80.
-
+  Apache2 on macOS configuration files are located at `/etc/apache2`. By default only http is available and default port is 80.
 
 #### 3.1 Configure Virtual Host
- - Uncomment line 'Include conf/extra/httpd-vhosts.conf' in '/etc/apache2/httpd.conf' (Apache config file)
+ - Uncomment line `Include conf/extra/httpd-vhosts.conf` in `/etc/apache2/httpd.conf` (Apache config file)
  - Create virtual host by updating httpd-vhosts.conf config file:
- ~~~~
- <VirtualHost *:80>
-    ServerAdmin webmaster@sp.mogikanensoftware.com
-    DocumentRoot "/Library/WebServer/Documents/sp.mogikanensoftware.com"
-    ServerName sp.mogikanensoftware.com
-    ServerAlias www.sp.mogikanensoftware.com
-    ErrorLog "/private/var/log/apache2/sp.mogikanensoftware.com-error_log"
-    CustomLog "/private/var/log/apache2/sp.mogikanensoftware.com-access_log" common
-</VirtualHost>
-~~~~
 
-- Create folder 'sp.mogikanensoftware.com' for virtual host at '/Library/WebServer/Documents/';
-- Create directory 'secure' inside folder '/Library/WebServer/Documents/sp.mogikanensoftware.com'. It will be the secured zone;
-- Place one index.html inside both root folder of virtual host and 'secure' folder.
+```
+  <VirtualHost *:80>
+   ServerAdmin webmaster@sp.mogikanensoftware.com
+   DocumentRoot "/Library/WebServer/Documents/sp.mogikanensoftware.com"
+   ServerName sp.mogikanensoftware.com
+   ServerAlias www.sp.mogikanensoftware.com
+   ErrorLog "/private/var/log/apache2/sp.mogikanensoftware.com-error_log"
+   CustomLog "/private/var/log/apache2/sp.mogikanensoftware.com-access_log" common
+  </VirtualHost>
+```
+
+- Create folder `sp.mogikanensoftware.com` for virtual host at `/Library/WebServer/Documents/`;
+- Create directory `secure` inside folder `/Library/WebServer/Documents/sp.mogikanensoftware.com`. It will be the secured zone;
+- Place one index.html inside both root folder of virtual host and `secure` folder.
 
 #### 3.2 Configure SSL
  Will use previously created private and public key for SSL.
-- Copy files 'local-dev.cer' and 'local-dev.p12' to folder '/etc/apache2'
-- Rename public cert file 'local-dev.cer' to 'server.crt';
-- Rename private key file 'ocal-dev.p12' to 'server.key';
-- Add/or uncomment 2 Apache plugins/mods in '/etc/apache2/httpd.conf':
+- Copy files `local-dev.cer` and `local-dev.p12` to folder `/etc/apache2`
+- Rename public cert file `local-dev.cer` to `server.crt`;
+- Rename private key file `local-dev.p12` to `server.key`;
+- Add/or uncomment 2 Apache plugins/mods in `/etc/apache2/httpd.conf`:
+
 ~~~~
 LoadModule socache_shmcb_module libexec/apache2/mod_socache_shmcb.so
 LoadModule ssl_module libexec/apache2/mod_ssl.so
 ~~~~
 
-- Uncomment line 'Include /private/etc/apache2/extra/httpd-ssl.conf' in '/etc/apache2/httpd.conf'
-- Update 'httpd-ssl.conf' config to configure SSL for the vistual host:
+- Uncomment line `Include /private/etc/apache2/extra/httpd-ssl.conf` in `/etc/apache2/httpd.conf`
+- Update `httpd-ssl.conf` config to configure SSL for the virtual host:
+
 ~~~~
 DocumentRoot "/Library/WebServer/Documents/sp.mogikanensoftware.com"
 ServerName sp.mogikanensoftware.com:443
 ~~~~
 
-- Please, verify and confirm that the follwoing lines are uncommneted and poin to the correct files (our key and cert):
+- Please, verify and confirm that the following lines are uncommented and point to the correct files (our key and cert):
+
 ~~~~
 SSLCertificateFile "/private/etc/apache2/server.crt"
 SLCertificateKeyFile "/private/etc/apache2/server.key"
 ~~~~
 
 #### 3.3 Configure Shibboleth plugin/mod
-- Create folder 'shibboleth-conf' inside '/private/etc/apache2/extra/';
-- Locate Shibboleth SP installed folder: '/opt/local/etc/shibboleth'
-- Copy apache24.config file from Shibboleth SP folder to folder '/private/etc/apache2/extra/shibboleth-conf';
+- Create folder `shibboleth-conf` inside `/private/etc/apache2/extra/`;
+- Locate Shibboleth SP installed folder: `/opt/local/etc/shibboleth`;
+- Copy `apache24.config` file from Shibboleth SP folder to folder `/private/etc/apache2/extra/shibboleth-conf`;
 - Enable Shibboleth SP and Apache integration:
- * Modify file '/etc/apache2/httpd.conf' - add line:
-  ~~~~
+ * Modify file `/etc/apache2/httpd.conf` - add line:
+~~~~
   Include /private/etc/apache2/extra/shibboleth-conf/apache24.config
-  ~~~~
+~~~~
 
-  * Enable Shibboleth SP plugin/mod by adding the follwoing line to 'apache24.config':
-  ~~~~
+  * Enable Shibboleth SP plugin/mod by adding the following line to `apache24.config`:
+
+~~~~
   LoadModule mod_shib /opt/local/lib/shibboleth/mod_shib_24.so
-  ~~~~
+~~~~
 
 ***
 ### 4. Configure Shibboleth SP
 It's not a simple task to fully properly configure Shibboleth SP. A very basic example of such configuration is below:
 - Add/configure host in Request Mapper section:
+
 ~~~~
 <RequestMapper type="Native">
-		<RequestMap>
-			<Host name="sp.mogikanensoftware.com" scheme="http">
-				<Path name="secure" authType="shibboleth" requireSession="true"
-					forceAuthn="true" />
-			</Host>
-		</RequestMap>
-	</RequestMapper>
+  <RequestMap>
+    <Host name="sp.mogikanensoftware.com" scheme="http">
+      <Path name="secure" authType="shibboleth" requireSession="true"
+        forceAuthn="true" />
+    </Host>
+  </RequestMap>
+</RequestMapper>
 ~~~~
 
 - Configure/modify Application Defaults to use our SP:
+
 ~~~~
-<ApplicationDefaults entityID="https://sp.mogikanensoftware.com/Shibboleth.sso"
+  <ApplicationDefaults entityID="https://sp.mogikanensoftware.com/Shibboleth.sso"
 		REMOTE_USER="eppn persistent-id targeted-id">
 ~~~~
 
 - Configure the appropriate Identity Provider:
 
   * Specify IdP/SSO entityID:
-  ~~~~
-  <SSO entityID="http://eumadfsdev.extranetusermanager.com/adfs/services/trust">
-				SAML2 SAML1
-			</SSO>
-  ~~~~
-  * Configure IdP/SSO metadata:
-  ~~~~
-  <MetadataProvider type="XML"
-			file="FederationMetadata.xml">
-		</MetadataProvider>
-  ~~~~
 
-- Configure CredentialResolver using private key and public certs created using keytool in step #2 at the very beginning
-  ~~~~
+~~~~
+  <SSO entityID="http://eumadfsdev.extranetusermanager.com/adfs/services/trust">
+    SAML2 SAML1
+  </SSO>
+~~~~
+
+  * Configure IdP/SSO metadata:
+
+~~~~
+  <MetadataProvider type="XML" file="FederationMetadata.xml">
+  </MetadataProvider>
+~~~~
+
+- Configure `CredentialResolver` using private key and public certs created using `keytool` in step #2 at the very beginning
+~~~~
   <!-- Simple file-based resolver for using a single keypair. -->
-		<CredentialResolver type="File" key="omd-local-dev.p12" certificate="omd-local-dev.cer"/>
-  ~~~~
+  <CredentialResolver type="File" key="omd-local-dev.p12" certificate="omd-local-dev.cer"/>
+~~~~
 - Start/or restart Apache:
-  ~~~~
-    apachectl start
-  ~~~~
+~~~~
+  ./apachectl start
+~~~~
   or
-  ~~~~
-    apachectl restart
-  ~~~~
+~~~~
+./apachectl restart
+~~~~
 
 - Start Shibboleth SP daemon:
 ~~~~
@@ -163,12 +171,12 @@ It's not a simple task to fully properly configure Shibboleth SP. A very basic e
 - Open public content of your virtual sites - [https://sp.mogikanensoftware.com/index.html](https://sp.mogikanensoftware.com/index.html). You should get the page without any security handling;
 - Open/try to access secured page - [https://sp.mogikanensoftware.com/secure/index.html](https://sp.mogikanensoftware.com/secure/index.html). You should be redirected to your Identity Provider Authentication process (login page);
 - Authenticate at your IdP. You will be redirected to your secured page;
-- Congratulations! We are done!!!
+- Congratulations! We are done!
 
 ***
 ### Additional notes
  - The above  describe a simplified way of configuration;
- - In reality there maight be multiple virtual sites,  multiple Identity Providers, etc.
+ - In reality there might be multiple virtual sites,  multiple Identity Providers, etc.
  - It's highly recommended to read the official [Shibboleth SP documentation](https://wiki.shibboleth.net/confluence/display/SHIB2)
 
 {% include custom_footer.html %}
