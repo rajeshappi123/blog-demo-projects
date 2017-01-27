@@ -4,12 +4,13 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](http://jekyllrb.com/)
+I am Vlad Voinov. I enjoy Software Development: I write code, I manage developers and I manage projects.
+I code mostly in Java and am a huge fan of [Spring Framework](https://spring.io/projects).
+I constantly explore different interesting Java and non-Java related libraries, frameworks and tools.
 
-You can find the source code for the Jekyll new theme at:
-{% include icon-github.html username="jekyll" %} /
-[minima](https://github.com/jekyll/minima)
 
-You can find the source code for Jekyll at
-{% include icon-github.html username="jekyll" %} /
-[jekyll](https://github.com/jekyll/jekyll)
+
+
+
+
+This blog is build by [jekyll](https://github.com/jekyll/jekyll) and hosted on [github](https://github.com/mogikanen9/mogikanen9.github.io).
