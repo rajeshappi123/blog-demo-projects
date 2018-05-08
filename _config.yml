@@ -27,3 +27,7 @@ github_username:  mogikanen9
 markdown: kramdown
 theme: minima
 comments: true
+
+google_analytics: UA-118873436-1
+
+exclude: [vendor,"README.md","Gemfile","Gemfile.lock"]
