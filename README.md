@@ -8,13 +8,18 @@ Personal blog: playground to test writing posts and using [Jekyll](https://jekyl
  * [https://analytics.google.com/](https://analytics.google.com/)
 
 
-### Command
+### Commands
 
 #### Build for PROD
 `JEKYLL_ENV=production jekyll build`
 
-### Build to run locally (Windows Linux Subsystem - watch is not working there properly)
+#### Build to run locally (Windows Linux Subsystem - watch is not working there properly)
 `jekyll serve --no-watch`
 
+#### Show list of bundled themes
+`bundle show`
+
+#### Show list of minima theme location
+`bundle show minima`
 
 
