@@ -1,14 +1,14 @@
 ---
 layout: post
-title:  "SharePoint Framework(SPFx). Custom Karma configuration for different test result and coverage reports."
+title:  "SharePoint Framework (SPFx). Custom Karma configuration for different test result and coverage reports."
 date:   2018-05-21 12:07:00 -0400
 categories: spfx react karma
 ---
 ### Introduction
 This post will describe how to customize [Karma](http://karma-runner.github.io/2.0/index.html) configuration for [SharePoint Framework (SPFx)](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/sharepoint-framework-overview) web part projects with [Office UI Fabric React](https://github.com/OfficeDev/office-ui-fabric-react)  created/generated with [Yoman SharePoint Generator](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/toolchain/scaffolding-projects-using-yeoman-sharepoint-generator) including:
- - Generate test result report in [JUnit](https://junit.org/) format (helpful for [VSTS CI dashboard](https://docs.microsoft.com/en-us/vsts/build-release/tasks/test/publish-test-results?view=vsts))
+ - Generate test result report in [JUnit](https://junit.org/) format (ex.: for [VSTS CI dashboard](https://docs.microsoft.com/en-us/vsts/build-release/tasks/test/publish-test-results?view=vsts))
  - Generate test coverage report in text (console) format
- - Generate test coverage report in [Cobertura](http://cobertura.github.io/cobertura/) format (helpful for [VSTS CI dashboard](https://docs.microsoft.com/en-us/vsts/build-release/tasks/test/publish-code-coverage-results?view=vsts))
+ - Generate test coverage report in [Cobertura](http://cobertura.github.io/cobertura/) format (ex.: for [VSTS CI dashboard](https://docs.microsoft.com/en-us/vsts/build-release/tasks/test/publish-code-coverage-results?view=vsts))
  
 <br/>
 ### Steps  
@@ -31,7 +31,7 @@ You should get list of successfully executed uni tests, ex:
 {% highlight bash %}
 
 Start:
-  HelooWorld init test
+  HelloWorld init test
     √ simple test
 
 Finished in 0.016 secs / 0.001 secs
@@ -88,7 +88,7 @@ npm i karma-junit-reporter --save-dev
 {% endhighlight %}
 
 The following steps needs to be done to enable JUnit reporter in Karma:
- - add JUnit reporter to the list of configured reporters
+ - add JUnit reporter to the list of configured reporters (default are `test-result`, `mocha-clean`, `coverage`)
  - provide JUnit reporter configuration
  - add karma-junit-reporter plugin to the list of configured plugins
 
@@ -127,7 +127,7 @@ of preconfigured coverage reporters (`html` and `json`). Add the following confi
 
 {% highlight js %}
 coverageReporter: {                        
-            dir: 'temp\\coverage',
+            dir: 'temp/coverage',
             reporters: [
                 { type: 'html', subdir: 'js' },
                 { type: 'json', subdir: './', file: 'js-coverage.json' },
@@ -210,7 +210,7 @@ module.exports = function (config) {
         reporters: ['test-result', 'mocha-clean', 'coverage', 'junit'],
 
         coverageReporter: {                        
-            dir: 'temp\\coverage',
+            dir: 'temp/coverage',
             reporters: [
                 { type: 'html', subdir: 'js' },
                 { type: 'json', subdir: './', file: 'js-coverage.json' },
