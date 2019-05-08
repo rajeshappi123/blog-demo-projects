@@ -1,0 +1,18 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./rest-api
+      dockerfile: src/main/docker/Dockerfile.jvm
+    image: mogikanen9-demo/rest-api:v100  
+    ports:
+     - "8080:8080"
+  client:
+    build:
+      context: ./rest-client
+      dockerfile: Dockerfile
+    image: mogikanen9-demo/rest-client:v100
+    ports:
+     - "8082:8082"
+    depends_on: 
+     - api
