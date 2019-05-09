@@ -1,0 +1,18 @@
+version: '3'
+services:
+  db:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    image: mogikanen9-demo/people-mysql-db:v1
+    ports:
+     - "2345:3306"
+  api:
+    build:
+      context: ./data-rest-api
+      dockerfile: Dockerfile
+    image: mogikanen9-demo/data-rest-people:v2
+    ports:
+     - "8090:8080"
+    depends_on: 
+     - db
