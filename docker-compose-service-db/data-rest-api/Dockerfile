@@ -2,7 +2,7 @@
 FROM openjdk:8-jdk-alpine
 
 # Add Maintainer Info
-MAINTAINER Vlad Voinov <mogikanensoftware@gmail.com>
+LABEL maintainer="mogikanensoftware@gmail.com"
 
 
 # Make port 8080 available to the world outside this container
