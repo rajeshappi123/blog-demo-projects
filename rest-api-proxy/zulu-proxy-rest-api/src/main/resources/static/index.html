@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>My Test Page</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        var serverUrl = 'http://localhost:8080/MyWebSite';
+        console.log("serverUrl->", serverUrl);
+
+        $(document).ready(function () {
+
+            $("#btnSimple").click(function (event) {
+                
+                var name = $("#simpleHelloName").val();
+                console.log("simpleHelloName->", name);
+
+                $.get(serverUrl + "/greeting/simple/" + name, function (data) {
+                    $("#simpleHelloResult").html(data);
+                });
+                
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+
+    <div>
+        <h3> Misc Hello Buttons</h3>
+    </div>
+    <div>
+        <input type="text" id="simpleHelloName" />
+        <button id="btnSimple">Simple Hello</button>
+    </div>
+    <div id="simpleHelloResult">
+    </div>
+ 
+</body>
+
+</html>

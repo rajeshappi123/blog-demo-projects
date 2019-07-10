@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+management:
+  endpoint:
+      health:
+        show-details: "ALWAYS"
+  security:
+    enabled: false
+
+zuul:
+  routes:
+    simpleHello:
+      path: /MyWebSite/greeting/simple/**
+      url: http://localhost:8082/greeting/simple
+
