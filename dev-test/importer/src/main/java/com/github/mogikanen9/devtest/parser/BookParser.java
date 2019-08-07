@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.mogikanen9.devtest.domain.Book;
-import com.github.mogikanen9.devtest.writer.Writer;
+import com.github.mogikanen9.devtest.pubsub.BookQueue;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class BookParser {
     private String doubleQuoteSymbol;
     private String doubleQuoteReplacement;
     private boolean skipFirstLine;
-    private Writer writer;
+    private BookQueue bookQueue;
 
     public BookResult parse() {
         long initTime = System.currentTimeMillis();
@@ -53,7 +53,7 @@ public class BookParser {
                     log.debug(String.format("book->%s", book));
                 }
 
-                writer.write(book);
+                bookQueue.push(book);
 
                 numberOfLines++;
             }           
@@ -63,6 +63,8 @@ public class BookParser {
 
             parsedTime = System.currentTimeMillis() - initTime;
             log.info(String.format("SourceFile->%s was successfully parsed in %dms.", sourceFile.toString(), parsedTime));        
+
+            bookQueue.push(bookQueue.getEOQMarker());
 
         } catch (Exception x) {
             log.error(x.getMessage(), x);

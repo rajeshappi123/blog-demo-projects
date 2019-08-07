@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -12,6 +13,8 @@ import java.util.function.Function;
 import com.github.mogikanen9.devtest.parser.BookParser;
 import com.github.mogikanen9.devtest.parser.BookResult;
 import com.github.mogikanen9.devtest.parser.ParserException;
+import com.github.mogikanen9.devtest.pubsub.BookConsumer;
+import com.github.mogikanen9.devtest.pubsub.BookQueue;
 import com.github.mogikanen9.devtest.scanner.FileScanner;
 import com.github.mogikanen9.devtest.writer.RestWriter;
 
@@ -32,14 +35,33 @@ public class App {
         final String apiUname = "importer";
         final String apiPwd = "Welcome13";
 
-        ExecutorService bookExecutor = Executors.newFixedThreadPool(2);
+        int producers = 2;        
+        int ratio = 4;
+        int consumers = producers*ratio;
+        int capacity = 100;
+
+        ExecutorService bookConsumerExecutor = Executors.newFixedThreadPool(consumers);       
+        ExecutorService bookProducerExecutor = Executors.newFixedThreadPool(producers);
 
         Function<Path, BookResult> bookFileParser = (path) -> {
             try {
-                return bookExecutor.submit(() -> {
+
+                BookQueue buffer = new BookQueue(path.toFile().getName() ,capacity);
+
+                //create producer
+                Future<BookResult> bookParser = bookProducerExecutor.submit(() -> {
                     return new BookParser(path, delimeterSymbol, quoteSymbol, doubleQuoteSymbol, doubleQuoteReplacement,
-                            true, new RestWriter(apiBaseUrl, apiUname, apiPwd)).parse();
-                }).get();
+                            true, buffer).parse();
+                });
+
+                //create and start consumers based on prod-cons ratio
+                for(int i=0;i<ratio;i++){
+                    bookConsumerExecutor.execute(new BookConsumer(buffer,  new RestWriter(apiBaseUrl, apiUname, apiPwd)));
+                }
+               
+                //start producer
+                return bookParser.get();
+
             } catch (InterruptedException | ExecutionException e) {
                 log.error(e.getMessage(), e);
                 return new BookResult(path, 0, 0, new ParserException(e.getMessage()));
@@ -50,7 +72,7 @@ public class App {
         Runnable bookImporter = () -> {
             log.info("Importing books...");
             new FileScanner(Paths.get("c://temp"), 10).listAll().stream().map(bookFileParser).forEach((rs) -> {
-                log.info(String.format("Imported result->%s",rs.toString()));
+                log.info(String.format("Parsed result->%s",rs.toString()));
             });
         };
 

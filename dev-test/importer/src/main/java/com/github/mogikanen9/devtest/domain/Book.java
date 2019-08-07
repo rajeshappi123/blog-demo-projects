@@ -25,4 +25,8 @@ public class Book implements Serializable{
 
     private String imgUrl;
 
+    public Book(String isbn){
+        this.isbn = isbn;
+    }
+
 }
