@@ -62,6 +62,8 @@ public class RestWriter implements Writer {
                 }                
             }
 
+            Thread.sleep(100);
+
         } catch (Exception e) {
             throw new WriterException(e.getMessage(), e);
         }

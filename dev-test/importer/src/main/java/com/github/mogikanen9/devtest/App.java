@@ -38,7 +38,7 @@ public class App {
         int producers = 2;        
         int ratio = 4;
         int consumers = producers*ratio;
-        int capacity = 100;
+        int capacity = 10;
 
         ExecutorService bookConsumerExecutor = Executors.newFixedThreadPool(consumers);       
         ExecutorService bookProducerExecutor = Executors.newFixedThreadPool(producers);
