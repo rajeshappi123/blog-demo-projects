@@ -36,7 +36,7 @@ public class Book{
     @Column(name = "updated_by",length = 50, nullable = false)
     private String updatedBy;
 
-    @Column(name = "isbn",length = 10, nullable = false, unique = true)
+    @Column(name = "isbn",length = 10, nullable = false, unique = false)
     private String isbn;
 
     @Column(name = "title",length = 255, nullable = false)
@@ -48,12 +48,12 @@ public class Book{
     @Column(name = "lang_code", length = 10)
     private String langCode;
 
-    @Column(name = "authors",length = 255, nullable = false)
+    @Column(name = "authors",length = 1000, nullable = false)
     private String authors;
 
     @Column(name = "avg_rating")
     private float avgRating;
 
-    @Column(name = "img_url",length = 1000)
+    @Column(name = "img_url",length = 2048)
     private String imgUrl;
 }
