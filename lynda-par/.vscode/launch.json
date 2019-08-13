@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - DownloadImagesChallenge",
+            "request": "launch",
+            "mainClass": "com.github.mogikanen9.lynda.DownloadImagesChallenge",
+            "projectName": "lynda-par"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - MatrixMultiplyChallenge",
+            "request": "launch",
+            "mainClass": "com.github.mogikanen9.lynda.MatrixMultiplyChallenge",
+            "projectName": "lynda-par"
+        }
+    ]
+}
