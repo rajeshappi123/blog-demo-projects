@@ -1,9 +1,9 @@
 package com.github.mogikanen9.demospringreactive.controller;
 
-import java.time.LocalDateTime;
-
 import com.github.mogikanen9.demospringreactive.model.Purchase;
+import com.github.mogikanen9.demospringreactive.service.CoinbaseService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +15,12 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/coin/purchase/v1")
 public class PurchaseController {
 
+    @Autowired
+    private CoinbaseService coinbaseService;
+
     @PostMapping(value = "/{name}")
-    public Mono<Purchase> createPurchase(@PathVariable String name) {
-        return Mono.fromSupplier(() -> new Purchase("1", "my name", "my price", LocalDateTime.now()));
+    public Mono<Purchase> createPurchase(@PathVariable("name") String name) {
+        return coinbaseService.createPurchase(name);
     }
+
 }

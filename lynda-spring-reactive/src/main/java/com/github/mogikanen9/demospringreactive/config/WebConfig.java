@@ -1,4 +1,4 @@
-package com.github.mogikanen9.demospringreactive.config
+package com.github.mogikanen9.demospringreactive.config;
 
 import com.github.mogikanen9.demospringreactive.controller.PurchaseHandler;
 

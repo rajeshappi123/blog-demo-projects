@@ -2,15 +2,20 @@ package com.github.mogikanen9.demospringreactive.model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document
 public class Purchase {
 
-    private final String id;
+    @Id
+    private String id;
+    
     private final String name;
     private final String price;
     private final LocalDateTime createdAt;
 
-    public Purchase(String id, String name, String price, LocalDateTime createdAt) {
-        this.id = id;
+    public Purchase(String name, String price, LocalDateTime createdAt) {
         this.name = name;
         this.price = price;
         this.createdAt = createdAt;
