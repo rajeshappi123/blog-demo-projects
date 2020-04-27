@@ -1,19 +1,19 @@
 ---
 layout: post
-title:  "Secure Spring Boot REST API with OAuth 2.0 Client Credentials Flow using Azure AD. Part 1."
+title:  "Secure REST API with OAuth 2.0 Client Credentials Flow using Azure AD."
 date:   2020-04-26 10:00:01 -0400
 categories: java spring rest azuread oauth2
 ---
 ### Introduction
-The following post will describe how to secure Spring Boot REST API with OAuth2 2.0 Client Credentials Flow (M2M) using Azure AD as Authorization Server. The focus will be on Azure AD setup and realted Spring Boot/Spring Security configuration nuances. The post will be devided into 2 parts: `Part 1. Overview and Azure AD setup` and `Part 2. Spring REST API configuration`.
+The following post will describe how to secure Spring Boot REST API with OAuth2 2.0 Client Credentials Flow (M2M) using Azure AD as Authorization Server. The focus will be on Azure AD setup and related Spring Boot/Spring Security configuration nuances. The post will be divided into 2 parts: `Part 1. Overview and Azure AD setup` and `Part 2. Spring REST API configuration`.
 
 ## Part 1. Overview and Azure AD setup
 
 ### Overview
 
-OAuth2 2.0 Client Credentials Flow (M2M) is intended to cover Machine-to-Machine (M2M) authentication when a human interction is not available or applicable (ex: a scheduled job calls a secured api). The flow includes 3 parties ( `Auhorization Server`, `Resource Server` and `Client`) and contains the following major steps:
+OAuth2 2.0 Client Credentials Flow (M2M) is intended to cover Machine-to-Machine (M2M) authentication when a human interaction is not available or applicable (ex: a scheduled job calls a secured api). The flow includes 3 parties ( `Authorization Server`, `Resource Server` and `Client`) and contains the following major steps:
 
-1. `Client` sends authoriation request to Authorization Server to get an access token. Client is using `Client ID` and `Client Secret` (as credentials) and provides `Scope` of the request. `Scope` identifies the resource/access the client is trying to get.
+1. `Client` sends request to Authorization Server to get an access token. Client is using `Client ID` and `Client Secret` (as credentials) and provides `Scope` of the request. `Scope` identifies the resource/access the client is trying to get.
 
 2. `Authorization Server` authenticates the `Client` and provides back an `access token`. 
 
@@ -25,26 +25,19 @@ OAuth2 2.0 Client Credentials Flow (M2M) is intended to cover Machine-to-Machine
 
 ### This Example/Approach
 
-<br/>
-
 #### 1. Authorization Server
 
-Will be using [Microsoft Azure Active Directory](https://azure.microsoft.com/en-ca/services/active-directory/) (Azure AD) as Authorization Server. Azure AD supports OAuth2 2.0 Client Credentials Flow and provides all the neccessary configruation options.
-
-<br/>
+Will be using [Microsoft Azure Active Directory](https://azure.microsoft.com/en-ca/services/active-directory/) (Azure AD) as Authorization Server. Azure AD supports OAuth2 2.0 Client Credentials Flow and provides all the necessary configuration options.
 
 #### 2. Resource Server
-The exmaple will have a [Spring Boot](https://spring.io/projects/spring-boot) based REST API with 2 endpoints. Will be using [Spring Security OAuth 2.0 Resource Server](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/html/boot-features-security-oauth2-resource-server.html) to protect the API and integrate with the Authorization Server.
-
+The example will have a [Spring Boot](https://spring.io/projects/spring-boot) based REST API with 2 endpoints. Will be using [Spring Security OAuth 2.0 Resource Server](https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/html/boot-features-security-oauth2-resource-server.html) to protect the API and integrate with the Authorization Server.
 
 #### 3. Client
-Will be using [Curl](https://curl.haxx.se/) as our HTTP cleint to demonstrate that our approach is pure HTTP based, complient with OAuth 2.0 and client technology agnostic.
+Will be using [Curl](https://curl.haxx.se/) as our HTTP client to demonstrate that our approach is pure HTTP based, compliant with OAuth 2.0 and client technology agnostic.
 
 <br/>
 
 ### Azure AD Setup
-
-<br/>
 
 #### API Registration
 
@@ -52,7 +45,7 @@ Will be using [Curl](https://curl.haxx.se/) as our HTTP cleint to demonstrate th
 
 Please, note that step with `Redirect URI` is optional - no need to provide anything there.
 
-2. Setup permissions (Application Roles) for API by modifying `appRoles` section of App Manifets file:
+2. Setup permissions (Application Roles) for API by modifying `appRoles` section of App Manifest file:
 
 {% highlight json %}
 
@@ -90,34 +83,30 @@ Please, note that step with `Redirect URI` is optional - no need to provide anyt
 Notes:
 
  -  Two app roles were setup (`CallHiApiRole` and `CallHiApiRole`) so they can be granted separately if needed
- -  `Manifest` is available via `Azure AD->App Registrtaions-><Your App>->Manifest`.
+ -  `Manifest` is available via `Azure AD->App Registrations-><Your App>->Manifest`.
  -  `Id` param in role setup must be a GUID and you will need to generate it manually (ex: using [https://www.guidgenerator.com/](https://www.guidgenerator.com/))
- - `Value` param contains the
-
-<br/>
+ - `Value` param contains the name of the role/permission
 
 #### Client Registration
 
-1. Register Cleint App in Azure AD by following steps in [https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app). These are the same steps as in step #1 of `API Registartion`.
+1. Register Client App in Azure AD by following steps in [https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app). These are the same steps as in step #1 of `API Registration`.
 
-2. Grant API persmissions (App Roles) to Client App Registartion using `Azure AD->App Registrtaions-><Your Client>->API Permisions` screen:
- - Select `Add a permission`
+2. Grant API permissions (App Roles) to Client App Registration using `Azure AD->App Registrations-><Your Client>->API Permisions` screen:
+ - Click `Add a permission` button
  - Select `My APIs-><Your API>->Application Permissions`
  - Tick `CallHiApiRole` and `CallHelloApiRole`
 
-3. Provdie Admin conecnt to Client for new permissions in `Azure AD->App Registrtaions-><Your Client>->API Permisions` screen by clicking `Grant admin concent for <Your Azure AD Instance>` button.
+3. Provide Admin consent to Client for new permissions in `Azure AD->App Registrations-><Your Client>->API Permissions` screen by clicking `Grant admin consent for <Your Azure AD Instance>` button.
 
-4. Create Client Secret by using `Azure AD->App Registrtaions-><Your Client>->Certificates and secrets` screen by clicking `New client secret`.
+4. Create Client Secret by using `Azure AD->App Registrations-><Your Client>->Certificates and secrets` screen by clicking `New client secret`.
 
-<br/>
-
-#### Veirfy Client and API registartion
+#### Verify Client and API Registration
 
 Will be checking the setup by performing a `Request Token` call to the Authorization Server (Azure AD):
 
-###### Request
+<b>Request</b>
 
-{% highlight bash %}
+{% highlight http %}
 
 curl --request POST \
   --url https://login.microsoftonline.com/<azure_ad_tenant_id>/oauth2/v2.0/token \
@@ -132,14 +121,13 @@ curl --request POST \
 Notes:
 - `<azure_ad_tenant_id>` is the Tenant ID of your Azure AD instance (`<Azure AD->Overview>`)
 - Scope: the scope defines requested scope. For Azure AD the format is `api://<api_application_id>/.default` 
-- `<api_application_id>` is the Application ID of the API (`zure AD->App Registrtaions-><Your App>-<Overview>`)
-- `<client_id>` is the Application ID of the Client registration in AD (`Azure AD->App Registrtaions-><Your Client>->Overview`)
-- `<client_secret>` is the secret defined for Client in step #4 of `Client Registartion` step
+- `<api_application_id>` is the Application ID of the API (`Azure AD->App Registrations-><Your App>-<Overview>`)
+- `<client_id>` is the Application ID of the Client registration in AD (`Azure AD->App Registrations-><Your Client>->Overview`)
+- `<client_secret>` is the secret defined for Client in step #4 of `Client Registration` step
 
+<b>Response</b>
 
-###### Response
-
-Will be getting a JWT access token as our response (successfull), ex.:
+Will be getting a JWT access token as our response (successful), ex.:
 
 {% highlight json %}
 
@@ -175,11 +163,13 @@ Notes:
 - `aud` claim contains the audience which is your API URI
 - `roles` claims contains list of granted permissions for the client for the request scope
 
-<br/>
+<br />
 
 ### References:
 * [Azure AD and the Oauth 2.0 Client Credentials Flow](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow)
+* [How to: Add app roles in your application and receive them in the token](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps)
 * [Azure AD App Manifest Reference](https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-app-manifest)
+* [Access Tokens in Azure AD](https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens)
 
  
  {% include custom_footer.html %}
