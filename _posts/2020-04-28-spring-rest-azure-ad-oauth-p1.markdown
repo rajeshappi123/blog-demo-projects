@@ -114,7 +114,7 @@ Will be checking the setup by performing a `Request Token` call to the Authoriza
 
 <b>Request</b>
 
-{% highlight http %}
+{% highlight bash %}
 
 curl --request POST \
   --url https://login.microsoftonline.com/<azure_ad_tenant_id>/oauth2/v2.0/token \

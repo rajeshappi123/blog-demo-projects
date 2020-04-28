@@ -113,12 +113,10 @@ public class GreetingController {
 
 8. Spring Security needs to know the location of the public key which was used to sign the token so token signature valication can be performed. Azure AD has several active private keys and uses one of them to sign the token. The public keys are available at [https://login.microsoftonline.com/common/discovery/v2.0/keys](https://login.microsoftonline.com/common/discovery/v2.0/keys). The actual key id is defined in `kid` claim in the `access token`. Will need to provide JWK URI to Spring Security so it knows where to grab the keys.
 
-{% highlight java %}
-
-...
-   @Override
-    public void configure(final HttpSecurity http) throws Exception {
-
+    ```java
+    ...
+     @Override
+     public void configure(final HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
                         .antMatchers("/api/v1/**").authenticated()
@@ -128,37 +126,29 @@ public class GreetingController {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())
                                 .jwkSetUri("https://login.microsoftonline.com/common/discovery/v2.0/keys")));
       }
-
-...
-
-{% endhighlight %}
+    ...
+    ```
 
 9. Will protect the endpoints of REST API with different roles/authorities by applying method level authorization configuration using `@PreAuthorize` annotation of `Spring Security` in the controller:
 
-{% highlight java %}
-
-...
-
-    @PreAuthorize("hasAuthority('SCOPE_CallHiApiRole')")
-    @GetMapping("/hi")
-    public String hi() {
+    ```java
+    ...
+     @PreAuthorize("hasAuthority('SCOPE_CallHiApiRole')")
+     @GetMapping("/hi")
+     public String hi() {
         return "Hi";
-    }
+     }
 
-    @PreAuthorize("hasAuthority('SCOPE_CallHelloApiRole')")
-    @GetMapping("/hello")
-    public String hello(@RequestParam(name = "name", required = true)
-    final String name) {
+     @PreAuthorize("hasAuthority('SCOPE_CallHelloApiRole')")
+     @GetMapping("/hello")
+     public String hello(@RequestParam(name = "name", required = true) final String name) {
         return String.format("Hello, %s", name);
-    }
-
-...
-
-{% endhighlight %}
-
-Note:
- - Role/authority names match the `Application Roles` defined in Azure AD and have `SCOPE_` prefix.
- - Use `hasAuthority` Security EL instead of `hasRole`
+     }
+    ...
+    ```
+Notes:
+  - Role/authority names match the `Application Roles` defined in Azure AD and have `SCOPE_` prefix.
+  - Use `hasAuthority` Security EL instead of `hasRole`
 
 
 #### Verify Resource Server setup
@@ -167,39 +157,35 @@ Will be checking the setup by performing a request to our API suing `Access Toke
 
 <b>Request</b>
 
-{% highlight http %}
+    {% highlight bash %}
 
-curl --request GET \
-  --url http://localhost:8082/api/v1/hi \
-  --header 'authorization: Bearer <access_token>'
-
-{% endhighlight %}
+     curl --request GET \
+     --url http://localhost:8082/api/v1/hi \
+     --header 'authorization: Bearer <access_token>'
+    {% endhighlight %}
 
 Notes:
 - `<access_token>` is the Tenant ID of your Azure AD instance (`<Azure AD->Overview>`)
 
 <b>Response. Example - Successful</b>
 
-{% highlight http %}
+    {% highlight bash %}
 
-HTTP/1.1 200 
-...
-Hi
-
-{% endhighlight %}
-
+     HTTP/1.1 200 
+     ...
+     Hi
+    {% endhighlight %}
 
 <b>Response. Example - Access Denied</b>
+
 In case proper application role is not granted as permission to the client we will get a 403 error:
 
-{% highlight http %}
+    {% highlight bash %}
 
-HTTP/1.1 403 
-...
-
-{"error":"access_denied","error_description":"Access is denied"}
-
-{% endhighlight %}
+     HTTP/1.1 403 
+     ...
+     {"error":"access_denied","error_description":"Access is denied"}     
+     {% endhighlight %}
 
 ### References:
 * [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
