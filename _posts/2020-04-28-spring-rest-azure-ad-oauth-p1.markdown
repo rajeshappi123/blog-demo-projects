@@ -1,15 +1,15 @@
 ---
 layout: post
-title:  "Secure REST API with OAuth 2.0 Client Credentials Flow using Azure AD."
-date:   2020-04-26 10:00:01 -0400
+title:  "Secure REST API with OAuth 2.0 Client Credentials Flow using Azure AD. Part 1"
+date:   2020-04-28 10:00:01 -0400
 categories: java spring rest azuread oauth2
 ---
 ### Introduction
 
 The following post will describe how to secure Spring Boot REST API with OAuth2 2.0 Client Credentials Flow (M2M) using Azure AD as Authorization Server. The focus will be on Azure AD setup and related Spring Boot/Spring Security configuration nuances. 
 The post will be divided into 2 parts: 
-- `Part 1. Overview and Azure AD setup`  
-- `Part 2. Spring REST API configuration`
+- [Part 1. Overview and Azure AD setup]( {{ page.url }} )
+- [Part 2. Spring REST API configuration](spring-rest-azure-ad-oauth-p2.html)
 
 Both parts are based on misc documentation resources, tutorials and examples provided by Microsoft, Spring and [https://www.baeldung.com/](https://www.baeldung.com/). The links will be provided in `References` section.
 
@@ -169,9 +169,7 @@ Will be getting a JWT access token as our response (successful), ex.:
 
 Notes:
 - `aud` claim contains the audience which is your API URI
-- `roles` claims contains list of granted permissions for the client for the request scope
-
-<br />
+- `roles` claim contains list of granted permissions for the client for the request scope
 
 ### References:
 * [Azure AD and the Oauth 2.0 Client Credentials Flow](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-client-creds-grant-flow)
@@ -179,5 +177,7 @@ Notes:
 * [Azure AD App Manifest Reference](https://docs.microsoft.com/en-us/azure/active-directory/develop/reference-app-manifest)
 * [Access Tokens in Azure AD](https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens)
 
+
+[Part 2. Spring REST API configuration](spring-rest-azure-ad-oauth-p2.html)
  
  {% include custom_footer.html %}
