@@ -68,19 +68,85 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 {% highlight java %}
 
 ...
-@Override
-public void configure(final ResourceServerSecurityConfigurer resources) throws Exception {
-    resources.resourceId("api://<api_application_id>").stateless(true);
-}
+    @Override
+    public void configure(final ResourceServerSecurityConfigurer resources) throws Exception {
+        resources.resourceId("api://<api_application_id>").stateless(true);
+    }
   ...
 
 {% endhighlight %}
 
-6. Customize roles/authorties
+6. Update Security Configuration and require authentication for all API endpoints:
 
-Notes:
+{% highlight java %}
 
-7. Protect the endpoints of REST API with different roles/authorities by applying method level authorization configuration using `@PreAuthorize` annotation of `Spring Security`
+...
+    @Override
+    public void configure(final HttpSecurity http) throws Exception {
+
+        http
+                .authorizeRequests(authorize -> authorize
+                        .antMatchers("/api/v1/**").authenticated()
+                        .antMatchers("/").permitAll());
+    }
+
+...
+
+{% endhighlight %}
+
+7. By default Spring Security expects `authorities` claim in `Access Token`. However Azure AD populates `roles` claim with the Applciation Roles. Will need to customize the default behaviour by defining a custom implementation of `JwtAuthenticationConverter`:
+
+
+{% highlight java %}
+
+...
+    @Override
+    public void configure(final HttpSecurity http) throws Exception {
+
+        http
+                .authorizeRequests(authorize -> authorize
+                        .antMatchers("/api/v1/**").authenticated()
+                        .antMatchers("/").permitAll())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+    }
+
+    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
+  ...
+
+{% endhighlight %}
+
+8. Spring Security needs to know the location of the public key which was used to sign the token so token signature valication can be performed. Azure AD has several active private keys and uses one of them to sign the token. The public keys are available at [https://login.microsoftonline.com/common/discovery/v2.0/keys](https://login.microsoftonline.com/common/discovery/v2.0/keys). The actual key id is defined in `kid` claim in the `access token`. Will need to provide JWK URI to SPring  Security so it knows where to grab the keys.
+
+{% highlight java %}
+
+...
+   @Override
+    public void configure(final HttpSecurity http) throws Exception {
+
+        http
+                .authorizeRequests(authorize -> authorize
+                        .antMatchers("/api/v1/**").authenticated()
+                        .antMatchers("/").permitAll()) // ;
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                                .jwkSetUri("https://login.microsoftonline.com/common/discovery/v2.0/keys")));
+      }
+
+...
+
+{% endhighlight %}
+
+9. Will protect the endpoints of REST API with different roles/authorities by applying method level authorization configuration using `@PreAuthorize` annotation of `Spring Security` in the controller:
 
 {% highlight java %}
 
@@ -108,9 +174,6 @@ Note:
  - Use `hasAuthority` Security EL instead of `hasRole`
 
 
-
-
-
 #### Verify Resource Server setup
 
 Will be checking the setup by performing a request to our API suing `Access Token` obtained from our AUthorization Server (see Part 1).
@@ -126,49 +189,30 @@ curl --request GET \
 {% endhighlight %}
 
 Notes:
-- `<azure_ad_tenant_id>` is the Tenant ID of your Azure AD instance (`<Azure AD->Overview>`)
-- Scope: the scope defines requested scope. For Azure AD the format is `api://<api_application_id>/.default` 
-- `<api_application_id>` is the Application ID of the API (`Azure AD->App Registrations-><Your App>-<Overview>`)
-- `<client_id>` is the Application ID of the Client registration in AD (`Azure AD->App Registrations-><Your Client>->Overview`)
-- `<client_secret>` is the secret defined for Client in step #4 of `Client Registration` step
+- `<access_token>` is the Tenant ID of your Azure AD instance (`<Azure AD->Overview>`)
 
-<b>Response</b>
+<b>Response. Example - Successful</b>
 
-Will be getting a JWT access token as our response (successful), ex.:
+{% highlight http %}
 
-{% highlight json %}
-
-{
-  "typ": "JWT",
-  "alg": "RS256",
-  "x5t": "CtTuhMJmD5M7DLdzD2v2x3QKSRY",
-  "kid": "CtTuhMJmD5M7DLdzD2v2x3QKSRY"
-}.{
-  "aud": "api://<api_application_id>",
-  "iss": "https://sts.windows.net/<azure_ad_tenant_id>/",
-  "iat": 1587765136,
-  "nbf": 1587765136,
-  "exp": 1587769036,
-  "aio": "...",
-  "appid": "...",
-  "appidacr": "1",
-  "idp": "https://sts.windows.net/<azure_ad_tenant_id>/",
-  "oid": "...",
-  "roles": [
-    "CallHelloApiRole",
-	"CallHiApiRole"
-  ],
-  "sub": "...",
-  "tid": "<azure_ad_tenant_id>d",
-  "uti": "...",
-  "ver": "1.0"
-}.[Signature]
+HTTP/1.1 200 
+...
+Hi
 
 {% endhighlight %}
 
-Notes:
-- `aud` claim contains the audience which is your API URI
-- `roles` claims contains list of granted permissions for the client for the request scope
+
+<b>Response. Example - Access Denied</b>
+In case proper application role is not granted as permission to the client we will get a 403 error:
+
+{% highlight http %}
+
+HTTP/1.1 403 
+...
+
+{"error":"access_denied","error_description":"Access is denied"}
+
+{% endhighlight %}
 
 <br />
 
