@@ -5,7 +5,15 @@ date:   2020-04-26 10:00:01 -0400
 categories: java spring rest azuread oauth2
 ---
 ### Introduction
-The following post will describe how to secure Spring Boot REST API with OAuth2 2.0 Client Credentials Flow (M2M) using Azure AD as Authorization Server. The focus will be on Azure AD setup and related Spring Boot/Spring Security configuration nuances. The post will be divided into 2 parts: `Part 1. Overview and Azure AD setup` and `Part 2. Spring REST API configuration`.
+
+The following post will describe how to secure Spring Boot REST API with OAuth2 2.0 Client Credentials Flow (M2M) using Azure AD as Authorization Server. The focus will be on Azure AD setup and related Spring Boot/Spring Security configuration nuances. 
+The post will be divided into 2 parts: 
+- `Part 1. Overview and Azure AD setup`  
+- `Part 2. Spring REST API configuration`
+
+Both parts are based on misc documentation resources, tutorials and examples provided by Microsoft, Spring and [https://www.baeldung.com/](https://www.baeldung.com/). The links will be provided in `References` section.
+
+<br/>
 
 ## Part 1. Overview and Azure AD setup
 

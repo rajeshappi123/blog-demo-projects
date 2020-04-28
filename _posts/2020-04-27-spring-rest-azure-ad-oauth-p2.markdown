@@ -4,10 +4,12 @@ title:  "Secure REST API with OAuth 2.0 Client Credentials Flow using Azure AD."
 date:   2020-04-27 09:00:01 -0400
 categories: java spring rest azuread oauth2
 ---
-### Introduction
-
 
 ## Part 2. Spring REST API configuration
+
+### Introduction
+The second part of the post will cover Spring Boot/Spring Security setup and configuration details. It will rely on the
+configuration of Azure AD from Part 1.
 
 ### Spring Boot REST API Example
 
@@ -16,7 +18,6 @@ Define a dummy Spring Boot REST API with 2 endpoints 'hi' and 'hello'.
 {% highlight java %}
 
 ...
-
 @RestController
 @RequestMapping("/api/v1")
 public class GreetingController {
@@ -36,7 +37,6 @@ public class GreetingController {
 
 {% endhighlight %}
 
-
 <br/>
 
 ### OAuth 2.0 Resource Server
@@ -45,7 +45,7 @@ public class GreetingController {
 
 1.  Create custom `ResourceServerConfig` class which extends `ResourceServerConfigurerAdapter` and is annotated with `@Configuration`.
 
-2. Enable resource server by adding `@EnableResourceServer` annottation to. 
+2. Enable resource server by adding `@EnableResourceServer` annotation to. 
 
 3. Enable Web Security by adding `@EnableWebSecurity` annotation to `ResourceServerConfig` class
 
@@ -59,11 +59,11 @@ public class GreetingController {
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
-  ...
+...
 
 {% endhighlight %}
 
-5. Explicitely set Resource ID for our resource server - it must be the same as our API URI which was defined in Part 1 and used as `scope` in access token request (without '.default').
+5. Explicitly set Resource ID for our resource server - it must be the same as our API URI which was defined in Part 1 and used as `scope` in access token request (without '.default').
 
 {% highlight java %}
 
@@ -72,7 +72,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(final ResourceServerSecurityConfigurer resources) throws Exception {
         resources.resourceId("api://<api_application_id>").stateless(true);
     }
-  ...
+...
 
 {% endhighlight %}
 
@@ -89,12 +89,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                         .antMatchers("/api/v1/**").authenticated()
                         .antMatchers("/").permitAll());
     }
-
 ...
 
 {% endhighlight %}
 
-7. By default Spring Security expects `authorities` claim in `Access Token`. However Azure AD populates `roles` claim with the Applciation Roles. Will need to customize the default behaviour by defining a custom implementation of `JwtAuthenticationConverter`:
+7. By default Spring Security expects `authorities` claim in `Access Token`. However Azure AD populates `roles` claim with the Application Roles. Will need to customize the default behaviour by defining a custom implementation of `JwtAuthenticationConverter`:
 
 
 {% highlight java %}
@@ -120,11 +119,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-  ...
+...
 
 {% endhighlight %}
 
-8. Spring Security needs to know the location of the public key which was used to sign the token so token signature valication can be performed. Azure AD has several active private keys and uses one of them to sign the token. The public keys are available at [https://login.microsoftonline.com/common/discovery/v2.0/keys](https://login.microsoftonline.com/common/discovery/v2.0/keys). The actual key id is defined in `kid` claim in the `access token`. Will need to provide JWK URI to SPring  Security so it knows where to grab the keys.
+8. Spring Security needs to know the location of the public key which was used to sign the token so token signature valication can be performed. Azure AD has several active private keys and uses one of them to sign the token. The public keys are available at [https://login.microsoftonline.com/common/discovery/v2.0/keys](https://login.microsoftonline.com/common/discovery/v2.0/keys). The actual key id is defined in `kid` claim in the `access token`. Will need to provide JWK URI to Spring Security so it knows where to grab the keys.
 
 {% highlight java %}
 
@@ -176,7 +175,7 @@ Note:
 
 #### Verify Resource Server setup
 
-Will be checking the setup by performing a request to our API suing `Access Token` obtained from our AUthorization Server (see Part 1).
+Will be checking the setup by performing a request to our API suing `Access Token` obtained from our Authorization Server (Azure AD - see Part 1).
 
 <b>Request</b>
 
@@ -219,6 +218,8 @@ HTTP/1.1 403
 ### References:
 * [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
 * [Spring Security: Configure Authorization)](https://docs.spring.io/spring-security/site/docs/current/reference/html5/#oauth2resourceserver-jwt-authorization)
+* [JWS + JWK in a Spring Security OAuth2 Application](https://www.baeldung.com/spring-security-oauth2-jws-jwk)
+* [Demo project source code](https://www.baeldung.com/spring-security-oauth2-jws-jwk)
 
  
  {% include custom_footer.html %}
