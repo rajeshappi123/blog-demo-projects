@@ -162,6 +162,8 @@ Will be checking the setup by performing a request to our API suing `Access Toke
      curl --request GET \
      --url http://localhost:8082/api/v1/hi \
      --header 'authorization: Bearer <access_token>'
+
+     
     {% endhighlight %}
 
 Notes:
@@ -186,6 +188,10 @@ In case proper application role is not granted as permission to the client we wi
      ...
      {"error":"access_denied","error_description":"Access is denied"}     
      {% endhighlight %}
+
+### Summary
+
+Spring Security provides a full support of OAuth 2.0 Resource Server implementation and is highly customizable. Check [full source code](https://github.com/mogikanen9/blog-demo-projects/tree/master/spring-boot-azure-ad-auth/api) of the above example on GitHub.
 
 ### References:
 * [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
