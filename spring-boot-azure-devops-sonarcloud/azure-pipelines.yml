@@ -1,0 +1,16 @@
+---
+jobs:
+  - job: Linux_with_Java11  
+    pool:
+      vmImage: 'Ubuntu-20.04'
+  
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: '$(System.DefaultWorkingDirectory)/spring-boot-azure-devops-sonarcloud/pom.xml'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.11'
+        jdkArchitectureOption: 'x64'
+        goals: 'verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+      env: 
+        SONAR_TOKEN: $(MY_SONAR_TOKEN_VAR)  
